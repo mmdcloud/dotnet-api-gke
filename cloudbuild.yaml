@@ -1,0 +1,25 @@
+steps:
+
+# Build the image 
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t',   
+    'us-central1-docker.pkg.dev/river-clover-404404/dotnet-api-app/dotnet-api-app:$SHORT_SHA',
+           '.']
+
+# Push the container image
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 
+    'us-central1-docker.pkg.dev/river-clover-404404/dotnet-api-app/dotnet-api-app:$SHORT_SHA']
+
+# Create release in Google Cloud Deploy
+- name: gcr.io/google.com/cloudsdktool/cloud-sdk
+  entrypoint: gcloud
+  args:
+    [
+      "deploy", "releases", "create", 'release-$BUILD_ID',
+      "--delivery-pipeline", "dotnet-api-app",
+      "--region", "us-central1",
+      "--annotations", "release-version=1",
+      "--source","./",
+      "--images", "dotnet-api-app=us-central1-docker.pkg.dev/river-clover-404404/dotnet-api-app/dotnet-api-app:$SHORT_SHA"
+    ]

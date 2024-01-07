@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dotnet-api-app
+spec:
+  selector:
+    matchLabels:
+      app: dotnet-api-app
+  template:
+    metadata:
+      labels:
+        app: dotnet-api-app
+    spec:
+      containers:
+      - name: dotnet-api-app
+        image: dotnet-api-app
+        ports:
+          - containerPort: 5000
